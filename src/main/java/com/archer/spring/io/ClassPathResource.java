@@ -105,4 +105,9 @@ public class ClassPathResource implements Resource {
         return ClassLoader.getSystemResource(path);
     }
 
+    @Override
+    public String toString() {
+        // 返回文件的路径作为描述
+        return getPath();
+    }
 }

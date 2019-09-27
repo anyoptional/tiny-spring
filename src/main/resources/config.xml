@@ -7,6 +7,80 @@
 
 <beans>
 
+    <bean id="byd" class="com.archer.spring.pojo.Car" singleton="false">
+        <property name="price">
+            <value>250000</value>
+        </property>
+        <property name="brand">
+            <value>BYD</value>
+        </property>
+    </bean>
 
+    <bean id="bmw" class="com.archer.spring.pojo.Car" singleton="false">
+        <property name="price">
+            <value>150000</value>
+        </property>
+        <property name="brand">
+            <value>BMW</value>
+        </property>
+    </bean>
+
+    <bean id="dai-mao-wang" class="com.archer.spring.pojo.Person">
+        <property name="name" type="java.lang.String">
+            <value>saber</value>
+        </property>
+        <property name="age">
+            <value>23</value>
+        </property>
+        <property name="car">
+            <ref bean="byd"/>
+        </property>
+    </bean>
+
+    <bean id="emiya-shiro" class="com.archer.spring.pojo.Person">
+        <property name="name" type="java.lang.String">
+            <value>archer</value>
+        </property>
+        <property name="age">
+            <value>24</value>
+        </property>
+        <property name="car">
+            <ref bean="bmw"/>
+        </property>
+    </bean>
+
+    <bean id="people" class="com.archer.spring.pojo.People" lazy-init="true">
+        <property name="citizens">
+            <list>
+                <ref bean="dai-mao-wang"/>
+                <ref bean="emiya-shiro"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="country" class="com.archer.spring.pojo.Country">
+        <property name="name">
+            <value>China</value>
+        </property>
+        <property name="isoCode">
+            <value>zh_CN</value>
+        </property>
+        <property name="capital">
+            <ref bean="capital"/>
+        </property>
+    </bean>
+
+    <bean id="capital" class="com.archer.spring.pojo.Capital">
+        <property name="name">
+            <value>Beijing</value>
+        </property>
+        <property name="people">
+            <ref bean="people"/>
+        </property>
+
+        <property name="country">
+            <ref bean="country"/>
+        </property>
+    </bean>
 
 </beans>
