@@ -6,3 +6,6 @@
 
 ##### third-stage
 根据支持的功能集以及依赖注入、JavaBean的相关原则，完善了对xml配置文件的读取和结果保存。
+
+##### fourth-stage
+定义了BeanFactory的基本框架。
