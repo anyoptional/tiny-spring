@@ -89,6 +89,8 @@ public class DefaultXMLBeanDefinitionParser implements XMLBeanDefinitionParser {
         }
         // 解析出对应的BeanDefinition
         BeanDefinition beanDefinition = parseBeanDefinition(beanName, element, classLoader);
+        // 检验一下是否有效
+        beanDefinition.validate();
         // 并注册进BeanFactory
         registry.registerBeanDefinition(beanName, beanDefinition);
         System.out.println("已解析出[" + beanName + "]对应的bean定义[" + beanDefinition + "]");

@@ -8,5 +8,27 @@
 <beans>
 
 
+    <bean id="dummy1"
+          class="com.archer.spring.xml.pojo.Dummy"
+          init-method="initialize"
+          destroy-method="dispose">
+    </bean>
+
+    <bean id="zombie" class="com.archer.spring.xml.pojo.Zombie">
+
+    </bean>
+
+    <bean id="dummy2" class="com.archer.spring.xml.pojo.Dummy" depends-on="dummy1,zombie">
+
+    </bean>
+
+    <bean id="dummy3" class="com.archer.spring.xml.pojo.Dummy" lazy-init="true">
+
+    </bean>
+
+
+    <bean id="dummy4" class="com.archer.spring.xml.pojo.Dummy" singleton="false">
+
+    </bean>
 
 </beans>
