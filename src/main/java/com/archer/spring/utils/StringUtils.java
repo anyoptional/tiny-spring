@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class StringUtils {
+public abstract class StringUtils {
 
     /**
      * 检查str是否包含字符。
@@ -66,5 +66,24 @@ public class StringUtils {
             }
         }
         return tokens.toArray(new String[0]);
+    }
+
+    /**
+     * 去掉str包含的所有空格。
+     */
+    public static String trimAllWhitespace(String str) {
+        if (!hasLength(str)) {
+            return str;
+        }
+
+        int len = str.length();
+        StringBuilder sb = new StringBuilder(str.length());
+        for (int i = 0; i < len; i++) {
+            char c = str.charAt(i);
+            if (!Character.isWhitespace(c)) {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
     }
 }

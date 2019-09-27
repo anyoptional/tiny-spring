@@ -15,7 +15,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Objects;
 
-public class ResourcesUtils {
+public abstract class ResourcesUtils {
 
     /**
      * 通过URL生成File。

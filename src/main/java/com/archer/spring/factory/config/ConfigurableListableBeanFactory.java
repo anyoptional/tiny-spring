@@ -6,7 +6,6 @@
 
 package com.archer.spring.factory.config;
 
-import com.archer.spring.factory.ConfigurableBeanFactory;
 import com.archer.spring.factory.ListableBeanFactory;
 
 /**

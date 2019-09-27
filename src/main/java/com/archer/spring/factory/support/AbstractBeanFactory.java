@@ -7,11 +7,11 @@
 package com.archer.spring.factory.support;
 
 import com.archer.spring.factory.BeansException;
-import com.archer.spring.factory.ConfigurableBeanFactory;
+import com.archer.spring.factory.config.ConfigurableBeanFactory;
 import com.archer.spring.factory.FactoryBean;
 import com.archer.spring.factory.config.BeanDefinition;
 import com.archer.spring.factory.config.BeanPostProcessor;
-import com.archer.spring.factory.propertyeditor.ClassEditor;
+import com.archer.spring.utils.ClassUtils;
 
 import java.beans.PropertyEditor;
 import java.util.*;
@@ -27,31 +27,23 @@ public abstract class AbstractBeanFactory implements ConfigurableBeanFactory {
 
     /// MARK - Properties
 
-    // 保存默认的PropertyEditor
-    private static final Map<Class<?>, PropertyEditor> defaultEditorMap = new HashMap<>();
-
-    static {
-        // 提前加载所有默认的PropertyEditor
-        defaultEditorMap.put(Class.class, new ClassEditor());
-    }
-
     // 单实例bean的缓存，需保证其线程安全
     private final Map<String, Object> singletonMap = Collections.synchronizedMap(new HashMap<>());
 
     // 保存自定义的PropertyEditor
-    private final Map<Class<?>, PropertyEditor> customEditorMap = new HashMap<>();
+    private final Map<Class<?>, PropertyEditor> customEditors = new HashMap<>();
 
     // 保存所有的bean后置处理器
-    private final List<BeanPostProcessor> postProcessorList = new ArrayList<>();
+    private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
 
     /// MARK - Getters & Setters
 
-    public Map<Class<?>, PropertyEditor> getCustomEditorMap() {
-        return Collections.unmodifiableMap(customEditorMap);
+    public Map<Class<?>, PropertyEditor> getCustomEditors() {
+        return Collections.unmodifiableMap(customEditors);
     }
 
-    public List<BeanPostProcessor> getPostProcessorList() {
-        return Collections.unmodifiableList(postProcessorList);
+    public List<BeanPostProcessor> getBeanPostProcessors() {
+        return Collections.unmodifiableList(beanPostProcessors);
     }
 
     /// MARK - Initializers
@@ -153,13 +145,14 @@ public abstract class AbstractBeanFactory implements ConfigurableBeanFactory {
     /// MARK - ConfigurableBeanFactory
 
     @Override
-    public void registerCustomEditor(Class requiredType, PropertyEditor propertyEditor) {
-        customEditorMap.put(requiredType, propertyEditor);
+    public void registerCustomEditor(Class requiredType, Class<? extends PropertyEditor> propertyEditorClass) {
+        PropertyEditor propertyEditor = ClassUtils.instantiateClass(propertyEditorClass);
+        customEditors.put(requiredType, propertyEditor);
     }
 
     @Override
     public void addBeanPostProcessor(BeanPostProcessor beanPostProcessor) {
-        postProcessorList.add(beanPostProcessor);
+        beanPostProcessors.add(beanPostProcessor);
     }
 
     @Override

@@ -4,10 +4,16 @@
  *  All rights reserved.
  */
 
-package com.archer.spring.factory;
+/*
+ *  Github: https://github.com/AnyOptional
+ *  Created by Archer on 2019/9/26.
+ *  All rights reserved.
+ */
 
-import com.archer.spring.factory.config.BeanDefinition;
-import com.archer.spring.factory.config.BeanPostProcessor;
+package com.archer.spring.factory.config;
+
+import com.archer.spring.factory.BeanFactory;
+import com.archer.spring.factory.BeansException;
 
 import java.beans.PropertyEditor;
 
@@ -28,7 +34,7 @@ public interface ConfigurableBeanFactory extends BeanFactory {
     /**
      * 向BeanFactory注册一个PropertyEditor，此PropertyEditor解析的目标类型是requiredType。
      */
-    void registerCustomEditor(Class requiredType, PropertyEditor propertyEditor);
+    void registerCustomEditor(Class requiredType, Class<? extends PropertyEditor> propertyEditorClass);
 
     /**
      * 添加一个bean的后置处理器

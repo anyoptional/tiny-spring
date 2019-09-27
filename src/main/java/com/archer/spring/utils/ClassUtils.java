@@ -8,7 +8,7 @@ package com.archer.spring.utils;
 
 import com.archer.spring.factory.BeansException;
 
-public class ClassUtils {
+public abstract class ClassUtils {
 
     /**
      * 获取默认类加载器。
@@ -32,7 +32,7 @@ public class ClassUtils {
     /**
      * 根据类名初始化其一个对象。
      */
-    public static Object instantiateClass(Class clazz) throws BeansException {
+    public static <T> T instantiateClass(Class<T> clazz) throws BeansException {
         try {
             return clazz.newInstance();
         } catch (InstantiationException | IllegalAccessException ex) {
