@@ -8,6 +8,7 @@ package com.archer.spring.factory.config;
 
 import com.archer.spring.factory.BeansException;
 import com.archer.spring.factory.ConstructorArgumentValues;
+import com.archer.spring.factory.FactoryBean;
 import com.archer.spring.factory.MutablePropertyValues;
 
 import java.util.Arrays;
@@ -174,6 +175,10 @@ public class BeanDefinition {
         // 接着检查是否设置了bean的类型
         if (this.beanClass == null) {
             throw new BeansException("beanClass不能为空");
+        }
+        // 如果此bean是FactoryBean，那么它必须是单例的
+        if (FactoryBean.class.isAssignableFrom(getBeanClass()) && !isSingleton()) {
+            throw new BeansException("FactoryBean必须配置成单例模式");
         }
         // bean类必须有共有的构造函数
         if (getBeanClass().getConstructors().length == 0) {
