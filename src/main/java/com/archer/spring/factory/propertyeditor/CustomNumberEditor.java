@@ -47,7 +47,7 @@ public class CustomNumberEditor extends PropertyEditorSupport {
     @Override
     public void setAsText(String text) throws IllegalArgumentException {
         // 处理空串的情况
-        if (this.allowEmpty && !StringUtils.hasLength(text)) {
+        if (this.allowEmpty && !StringUtils.hasText(text)) {
             setValue(null);
         } else if (this.numberFormat != null) {
             setValue(NumberUtils.parseNumber(text, this.numberClass, this.numberFormat));

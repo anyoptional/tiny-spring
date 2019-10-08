@@ -55,7 +55,7 @@ public class CustomBooleanEditor extends PropertyEditorSupport {
     @Override
     public void setAsText(@Nullable String text) throws IllegalArgumentException {
         String input = (text != null ? text.trim() : null);
-        if (this.allowEmpty && !StringUtils.hasLength(input)) {
+        if (this.allowEmpty && !StringUtils.hasText(input)) {
             // Treat empty String as null value.
             setValue(null);
         } else if (this.trueString != null && this.trueString.equalsIgnoreCase(input)) {

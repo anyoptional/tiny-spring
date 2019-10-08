@@ -84,7 +84,7 @@ public class DefaultXMLBeanDefinitionParser implements XMLBeanDefinitionParser {
         // tiny spring不支持inner bean，也不支持bean的别名，
         // 因此获取到的id就是bean的名称，也是关联对应BeanDefinition的key
         String beanName = element.getAttribute(ID_ATTRIBUTE);
-        if (!StringUtils.hasLength(beanName)) {
+        if (!StringUtils.hasText(beanName)) {
             throw new BeansException("每个<bean>标签都必须明确指定id属性");
         }
         // 解析出对应的BeanDefinition
@@ -103,7 +103,7 @@ public class DefaultXMLBeanDefinitionParser implements XMLBeanDefinitionParser {
         // tiny spring也没有支持BeanFactory的层次结构，
         // 因此每个bean也需要明确指明其所属的类
         String beanClassName = element.getAttribute(CLASS_ATTRIBUTE);
-        if (!StringUtils.hasLength(beanClassName)) {
+        if (!StringUtils.hasText(beanClassName)) {
             throw new BeansException("每个<bean>标签都必须明确指定class属性");
         }
         try {
@@ -125,12 +125,12 @@ public class DefaultXMLBeanDefinitionParser implements XMLBeanDefinitionParser {
             beanDefinition.setAutowireMode(getAutowireMode(autowire));
             // 获取自定义的初始化方法名
             String initMethodName = element.getAttribute(INIT_METHOD_ATTRIBUTE);
-            if (StringUtils.hasLength(initMethodName)) {
+            if (StringUtils.hasText(initMethodName)) {
                 beanDefinition.setInitMethodName(initMethodName);
             }
             // 获取自定义的销毁方法名
             String destroyMethodName = element.getAttribute(DESTROY_METHOD_ATTRIBUTE);
-            if (StringUtils.hasLength(destroyMethodName)) {
+            if (StringUtils.hasText(destroyMethodName)) {
                 beanDefinition.setDestroyMethodName(destroyMethodName);
             }
             // 获取是否配置成单例
@@ -174,7 +174,7 @@ public class DefaultXMLBeanDefinitionParser implements XMLBeanDefinitionParser {
     private void parsePropertyElement(String beanName, Element element, MutablePropertyValues propertyValues) {
         // 获取属性名
         String name = element.getAttribute(NAME_ATTRIBUTE);
-        if (!StringUtils.hasLength(name)) {
+        if (!StringUtils.hasText(name)) {
             throw new BeansException("<property>标签必须明确指定name属性");
         }
         // 提取属性值
@@ -211,7 +211,7 @@ public class DefaultXMLBeanDefinitionParser implements XMLBeanDefinitionParser {
         if (element.getTagName().equals(REF_ELEMENT)) {
             // 如果是<ref>，它指向另一个bean的定义
             String beanRef = element.getAttribute(BEAN_REF_ATTRIBUTE);
-            if (!StringUtils.hasLength(beanRef)) {
+            if (!StringUtils.hasText(beanRef)) {
                 throw new BeansException("[" + beanName + "] - <ref>标签必须通过bean属性指明引用的其他bean");
             }
             // 返回一个包装引用的对象
@@ -293,7 +293,7 @@ public class DefaultXMLBeanDefinitionParser implements XMLBeanDefinitionParser {
         // <constructor-arg>下支持的子标签类型和<property>是一样的，
         // 和<property>标签一样解析就可以了
         Object value = getPropertyValue(beanName, element);
-        if (StringUtils.hasLength(indexAttribute)) {
+        if (StringUtils.hasText(indexAttribute)) {
             try {
                 // 确定index有效
                 int index = Integer.parseInt(indexAttribute);
@@ -301,7 +301,7 @@ public class DefaultXMLBeanDefinitionParser implements XMLBeanDefinitionParser {
                     throw new BeansException("[" + beanName + "] - <constructor-arg>标签的index属性值不能是负数");
                 }
                 // 有index也有type
-                if (StringUtils.hasLength(typeAttribute)) {
+                if (StringUtils.hasText(typeAttribute)) {
                     constructorArgumentValues.addIndexedArgumentValue(index, value, typeAttribute);
                 } else {
                     // 只有index
@@ -313,7 +313,7 @@ public class DefaultXMLBeanDefinitionParser implements XMLBeanDefinitionParser {
             }
         } else {
             // 只有type
-            if (StringUtils.hasLength(typeAttribute)) {
+            if (StringUtils.hasText(typeAttribute)) {
                 constructorArgumentValues.addGenericArgumentValue(value, typeAttribute);
             } else {
                 // 啥也没有

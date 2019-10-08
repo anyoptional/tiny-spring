@@ -15,7 +15,7 @@ public abstract class StringUtils {
     /**
      * 检查str是否包含字符。
      */
-    public static boolean hasLength(String str) {
+    public static boolean hasText(String str) {
         return (str != null && !str.isEmpty());
     }
 
@@ -23,7 +23,7 @@ public abstract class StringUtils {
      * 将inString中出现的所有oldPattern替换成newPattern。
      */
     public static String replace(String inString, String oldPattern, String newPattern) {
-        if (!hasLength(inString) || !hasLength(oldPattern) || newPattern == null) {
+        if (!hasText(inString) || !hasText(oldPattern) || newPattern == null) {
             return inString;
         }
         int index = inString.indexOf(oldPattern);
@@ -72,7 +72,7 @@ public abstract class StringUtils {
      * 去掉str包含的所有空格。
      */
     public static String trimAllWhitespace(String str) {
-        if (!hasLength(str)) {
+        if (!hasText(str)) {
             return str;
         }
 
