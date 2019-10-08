@@ -43,8 +43,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         }
 
         BeanWrapper beanWrapper = null;
-        // 是构造函数注入且持有构造函数的参数
-        if (mbd.getResolvedAutowireMode() == BeanDefinition.AUTOWIRE_CONSTRUCTOR &&
+        // 是构造函数注入或持有构造函数的参数
+        if (mbd.getResolvedAutowireMode() == BeanDefinition.AUTOWIRE_CONSTRUCTOR ||
                 mbd.hasConstructorArgumentValues()) {
             beanWrapper = autowireConstructor(beanName, mbd);
         } else {
@@ -63,8 +63,14 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         // 给属性赋值
         populateBean(beanName, mbd, beanWrapper);
 
+        // 生命周期回调
         try {
-            // TODO BeanNameAware之类的接口回调
+            if (bean instanceof BeanNameAware) {
+                ((BeanNameAware) bean).setBeanName(beanName);
+            }
+            if (bean instanceof BeanFactoryAware) {
+                ((BeanFactoryAware) bean).setBeanFactory(this);
+            }
             bean = applyBeanPostProcessorsBeforeInitialization(bean, beanName);
             invokeInitMethods(bean, mbd);
             bean = applyBeanPostProcessorsAfterInitialization(bean, beanName);
@@ -77,7 +83,12 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
     @Override
     public void destroySingleton(String beanName, Object singletonObject) {
-
+        BeanDefinition mbd = getBeanDefinition(beanName);
+        try {
+            invokeDestroyMethod(singletonObject, mbd);
+        } catch (Exception e) {
+            throw new BeansException("无法调用[" + beanName + "]定义的销毁方法");
+        }
     }
 
     @Override
@@ -93,7 +104,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             return autowireConstructor(beanClass.getName(), mbd).getWrappedInstance();
         }
         Object bean = ClassUtils.instantiateClass(beanClass);
-        populateBean(beanClass.getName(), mbd, new BeanWrapper(bean));
+        BeanWrapper beanWrapper = new BeanWrapper(bean);
+        registerPropertyEditors(beanWrapper);
+        populateBean(beanClass.getName(), mbd, beanWrapper);
         return bean;
     }
 
@@ -104,7 +117,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         }
         BeanDefinition mbd = new BeanDefinition(existingBean.getClass());
         mbd.setAutowireMode(autowireMode);
-        populateBean(existingBean.getClass().getName(), mbd, new BeanWrapper(existingBean));
+        BeanWrapper beanWrapper = new BeanWrapper(existingBean);
+        registerPropertyEditors(beanWrapper);
+        populateBean(existingBean.getClass().getName(), mbd, beanWrapper);
     }
 
     @Override
@@ -126,7 +141,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         return bean;
     }
 
-    /// MARK -
+    /// MARK - Template method
 
     /**
      * 自动装配时使用，返回工厂中所有与requiredType兼容的bean
@@ -152,7 +167,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                 }
                 // 执行解析并构造镜像版本
                 ConstructorArgumentValues.ValueHolder valueHolder = cargs.getIndexedArgumentValues().get(index);
-                Object resolvedValue = resolveValueIfNecessary(beanName, mbd, "ctor arg at" + index, valueHolder.getValue());
+                Object resolvedValue = resolveValueIfNecessary(beanName, mbd, "ctor arg at " + index, valueHolder.getValue());
                 resolvedValues.addIndexedArgumentValue(index, resolvedValue, valueHolder.getType());
             }
             // 执行解析并构造镜像版本
@@ -161,7 +176,6 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                 resolvedValues.addGenericArgumentValue(resolvedValue, valueHolder.getType());
             }
         }
-
         Constructor<?>[] constructors = mbd.getBeanClass().getConstructors();
         BeanWrapper beanWrapper = new BeanWrapper();
         registerPropertyEditors(beanWrapper);
@@ -177,7 +191,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                 Class[] argTypes = constructor.getParameterTypes();
                 Object[] args = new Object[argTypes.length];
                 for (int j = 0; j < argTypes.length; j++) {
-                    // 首先看看cargs中是否有符合的
+                    // 首先看看resolvedValues中是否有符合的
                     ConstructorArgumentValues.ValueHolder valueHolder = resolvedValues.getArgumentValue(j, argTypes[j]);
                     if (valueHolder != null) {
                         // 有的话解析以后可以使用
@@ -209,6 +223,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         return beanWrapper;
     }
 
+    /**
+     * 给bean的属性赋值
+     */
     private void populateBean(String beanName, BeanDefinition mbd, BeanWrapper beanWrapper) {
         MutablePropertyValues pvs = mbd.getPropertyValues();
 
@@ -230,6 +247,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         applyPropertyValues(beanName, mbd, beanWrapper, pvs);
     }
 
+    /**
+     * 按名称自动装配
+     */
     private void autowireByName(String beanName, BeanDefinition mbd,
                                   BeanWrapper bw, MutablePropertyValues pvs) {
         String[] propertyNames = unsatisfiedObjectProperties(mbd, bw);
@@ -241,6 +261,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         }
     }
 
+    /**
+     * 按类型自动装配
+     */
     private void autowireByType(String beanName, BeanDefinition mbd,
                                   BeanWrapper bw, MutablePropertyValues pvs) {
         String[] propertyNames = unsatisfiedObjectProperties(mbd, bw);
@@ -257,12 +280,15 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         }
     }
 
+    /**
+     * 返回bean中未赋值的属性(可写的且非简单类型)，用于自动装配
+     */
     private String[] unsatisfiedObjectProperties(BeanDefinition mbd, BeanWrapper bw) {
         Set<String> result = new TreeSet<>();
         PropertyDescriptor[] pds = bw.getPropertyDescriptors();
         for (PropertyDescriptor pd : pds) {
             if (pd.getWriteMethod() != null &&
-                    ClassUtils.isSimpleProperty(pd.getPropertyType()) &&
+                    !ClassUtils.isSimpleProperty(pd.getPropertyType()) &&
                     mbd.getPropertyValues().getPropertyValue(pd.getName()) == null) {
                 result.add(pd.getName());
             }
@@ -270,6 +296,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         return result.toArray(new String[0]);
     }
 
+    /**
+     * 赋值方法，将属性值赋给对应属性
+     */
     private void applyPropertyValues(String beanName, BeanDefinition mbd, BeanWrapper bw,
                                      MutablePropertyValues pvs) throws BeansException {
         if (pvs == null) return;
@@ -283,6 +312,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         bw.setPropertyValues(deepCopy);
     }
 
+    /**
+     * 将BeanFactory持有的PropertyEditor同步到BeanWrapper
+     */
     private void registerPropertyEditors(BeanWrapper wrapper) {
         Map<Class<?>, PropertyEditor> customEditors = getCustomEditors();
         Set<Class<?>> keys = customEditors.keySet();
@@ -291,13 +323,33 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         }
     }
 
+    /**
+     * 调用bean的初始化方法
+     */
     private void invokeInitMethods(Object bean, BeanDefinition mbd) throws Exception {
-        // TODO InitializingBean回调
+        if (bean instanceof InitializingBean) {
+            ((InitializingBean) bean).afterPropertiesSet();
+        }
         if (mbd.getInitMethodName() != null) {
             bean.getClass().getMethod(mbd.getInitMethodName()).invoke(bean);
         }
     }
 
+    /**
+     * 调用bean的销毁方法
+     */
+    private void invokeDestroyMethod(Object bean, BeanDefinition mbd) throws Exception {
+        if (bean instanceof DisposableBean) {
+            ((DisposableBean) bean).destroy();
+        }
+        if (mbd.getDestroyMethodName() != null) {
+            bean.getClass().getMethod(mbd.getDestroyMethodName()).invoke(bean);
+        }
+    }
+
+    /**
+     * value可能是复合类型，需要进一步解析
+     */
     private Object resolveValueIfNecessary(String beanName, BeanDefinition mbd,
                                            String argName, Object value) throws BeansException {
         // value是指向另一个bean的引用

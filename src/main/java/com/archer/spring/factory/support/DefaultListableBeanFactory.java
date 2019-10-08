@@ -13,6 +13,9 @@ import com.archer.spring.factory.config.ConfigurableListableBeanFactory;
 
 import java.util.*;
 
+/**
+ * 基础的BeanFactory实现。
+ */
 public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
         implements BeanDefinitionRegistry, ConfigurableListableBeanFactory {
 

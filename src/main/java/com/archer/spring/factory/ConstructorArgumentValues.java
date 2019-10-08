@@ -6,6 +6,8 @@
 
 package com.archer.spring.factory;
 
+import com.archer.spring.utils.ClassUtils;
+
 import java.util.*;
 
 /**
@@ -82,8 +84,7 @@ public class ConstructorArgumentValues {
      */
     public ValueHolder getGenericArgumentValue(Class<?> requiredType) {
         // 遍历genericArgumentValues列表
-        for (Iterator it = this.genericArgumentValues.iterator(); it.hasNext();) {
-            ValueHolder valueHolder = (ValueHolder) it.next();
+        for (ValueHolder valueHolder : genericArgumentValues) {
             Object value = valueHolder.getValue();
             // 如果给定了类型，检查类型是否相同
             if (valueHolder.getType() != null) {
@@ -91,11 +92,8 @@ public class ConstructorArgumentValues {
                     return valueHolder;
                 }
             }
-            // 没有指定类型，查看
-            // 1、参数值是否是一个requiredType
-            // 2、第1步失败的基础上，如果requiredType是一个Array并且value是一个list，也认为匹配
-            // 这里就是做了一个扩展了，因为<list>标签可以支持数组和list。
-            else if (requiredType.isInstance(value) || (requiredType.isArray() && (value instanceof List))) {
+            // 没有指定类型，查看参数值是否是一个requiredType
+            else if (requiredType.isInstance(value) || ClassUtils.isAssignableValue(requiredType, value)) {
                 return valueHolder;
             }
         }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Github: https://github.com/AnyOptional
+  ~ Created by Archer on 2019/10/08.
+  ~ All rights reserved.
+  -->
+
+<beans>
+
+    <bean id="coin" class="com.archer.spring.factory.pojo.QQCoin" init-method="initMethod">
+        <constructor-arg type="int">
+            <value>256</value>
+        </constructor-arg>
+    </bean>
+
+    <bean id="tencent" class="com.archer.spring.factory.pojo.Tencent" autowire="autodetect">
+    </bean>
+
+</beans>
