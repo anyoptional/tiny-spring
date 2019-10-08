@@ -57,6 +57,10 @@ public abstract class PropertyEditorRegistrySupport implements PropertyEditorReg
         customEditors.put(requiredType, propertyEditor);
     }
 
+    public boolean containsCustomEditor(Class<?> requiredType) {
+        return customEditors.containsKey(requiredType);
+    }
+
     @Override
     public PropertyEditor findCustomEditor(Class<?> requiredType) {
         return customEditors.get(requiredType);

@@ -30,6 +30,11 @@ public interface PropertyAccessor {
     PropertyDescriptor getPropertyDescriptor(String propertyName) throws BeansException;
 
     /**
+     * 获取所有属性的描述信息
+     */
+    PropertyDescriptor[] getPropertyDescriptors() throws BeansException;
+
+    /**
      * 给bean的propertyName属性设置值propertyValue，相当于 bean.setPropertyName(propertyValue)
      */
     default void setPropertyValue(PropertyValue propertyValue) throws BeansException {

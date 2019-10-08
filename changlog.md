@@ -12,3 +12,6 @@
 
 ##### fifth-stage
 定义了类型转换的基本框架。
+
+##### sixth-stage
+完善了类型转换，实现了基本的BeanFactory。

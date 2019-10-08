@@ -16,7 +16,7 @@ public interface AutowireCapableBeanFactory {
     /**
      * 根据给定的bean类型和自动装配策略来创建和设置一个bean实例。
      */
-    Object autowire(Class beanClass, int autowireMode) throws BeansException;
+    Object autowire(Class<?> beanClass, int autowireMode) throws BeansException;
 
     /**
      * 自动装配给定bean实例的属性，使用指定的自动装配策略。

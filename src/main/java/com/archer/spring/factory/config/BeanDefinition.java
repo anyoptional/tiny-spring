@@ -11,6 +11,7 @@ import com.archer.spring.factory.ConstructorArgumentValues;
 import com.archer.spring.factory.FactoryBean;
 import com.archer.spring.factory.MutablePropertyValues;
 
+import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -184,6 +185,33 @@ public class BeanDefinition {
         if (getBeanClass().getConstructors().length == 0) {
             throw new BeansException("[" + getBeanClass() + "]类必须有共有的无参构造函数，以便后续的创建工作");
         }
+    }
+
+    /**
+     * 返回适当的装配模式。
+     */
+    public int getResolvedAutowireMode() {
+        if (this.autowireMode == AUTOWIRE_AUTODETECT) {
+            // 判定是使用setter注入还是构造函数注入。
+            // 如果bean类有无参构造函数，就使用setter注入，否则使用构造函数注入。
+            // 因为如果有无参构造函数，那么其他东西应该都是可配的，不然不是没意义了么
+            Constructor[] constructors = getBeanClass().getConstructors();
+            for (Constructor ctor : constructors) {
+                if (ctor.getParameterTypes().length == 0) {
+                    return AUTOWIRE_BY_TYPE;
+                }
+            }
+            return AUTOWIRE_CONSTRUCTOR;
+        } else {
+            return this.autowireMode;
+        }
+    }
+
+    /**
+     * 是否持有构造函数参数
+     */
+    public boolean hasConstructorArgumentValues() {
+        return (constructorArgumentValues != null && !constructorArgumentValues.isEmpty());
     }
 
     @Override

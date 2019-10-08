@@ -7,6 +7,7 @@
 package com.archer.spring.factory;
 
 import com.archer.spring.utils.ClassUtils;
+import com.sun.istack.internal.NotNull;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -30,9 +31,6 @@ public final class BeanWrapper extends TypeConverterSupport implements PropertyA
 
     // 为object缓存的自省信息
     private IntrospectionResults cachedIntrospectionResults;
-
-    // 类型转换的代理
-    private final TypeConverterDelegate typeConverterDelegate = new TypeConverterDelegate(this);
 
     /// MARK - Getters & Setters
 
@@ -83,7 +81,7 @@ public final class BeanWrapper extends TypeConverterSupport implements PropertyA
             // 获取要转换成的类型
             Class<?> propertyType = pd.getPropertyType();
             // 做转换
-            Object newValue = convertIfNecessary(propertyValue, propertyType);
+            Object newValue = convertIfNecessary(propertyValue, pd);
             if (propertyType.isPrimitive() &&
                     (newValue == null || "".equals(newValue))) {
                 throw new IllegalArgumentException("属性[" + propertyName + "]的类型是基本类型[" + propertyType + "]");
@@ -120,6 +118,11 @@ public final class BeanWrapper extends TypeConverterSupport implements PropertyA
         Objects.requireNonNull(propertyName, "属性名不能为空");
         Objects.requireNonNull(cachedIntrospectionResults, "object必须已被设置");
         return cachedIntrospectionResults.getPropertyDescriptor(propertyName);
+    }
+
+    @Override
+    public PropertyDescriptor[] getPropertyDescriptors() throws BeansException {
+        return cachedIntrospectionResults.getBeanInfo().getPropertyDescriptors();
     }
 
     /// MARK - Internal static class

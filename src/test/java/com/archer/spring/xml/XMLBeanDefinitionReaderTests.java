@@ -57,7 +57,7 @@ public class XMLBeanDefinitionReaderTests {
         Resource resource = new ClassPathResource("config.xml");
         DefaultBeanDefinitionRegistry registry = new DefaultBeanDefinitionRegistry();
         XMLBeanDefinitionReader reader = new DefaultXMLBeanDefinitionReader(registry);
-        reader.loadBeanDefinition(resource);
+        reader.loadBeanDefinitions(resource);
 
         assertEquals(7, registry.getBeanDefinitionCount());
 
@@ -85,7 +85,7 @@ public class XMLBeanDefinitionReaderTests {
         Resource resource = new ClassPathResource("zombie.xml");
         DefaultBeanDefinitionRegistry registry = new DefaultBeanDefinitionRegistry();
         XMLBeanDefinitionReader reader = new DefaultXMLBeanDefinitionReader(registry);
-        reader.loadBeanDefinition(resource); // throws exception
+        reader.loadBeanDefinitions(resource); // throws exception
     }
 
     @Test(expected = BeansException.class)
@@ -93,7 +93,7 @@ public class XMLBeanDefinitionReaderTests {
         Resource resource = new ClassPathResource("joker.xml");
         DefaultBeanDefinitionRegistry registry = new DefaultBeanDefinitionRegistry();
         XMLBeanDefinitionReader reader = new DefaultXMLBeanDefinitionReader(registry);
-        reader.loadBeanDefinition(resource); // throws exception
+        reader.loadBeanDefinitions(resource); // throws exception
     }
 
     @Test
@@ -101,7 +101,7 @@ public class XMLBeanDefinitionReaderTests {
         Resource resource = new ClassPathResource("dummy.xml");
         DefaultBeanDefinitionRegistry registry = new DefaultBeanDefinitionRegistry();
         XMLBeanDefinitionReader reader = new DefaultXMLBeanDefinitionReader(registry);
-        reader.loadBeanDefinition(resource);
+        reader.loadBeanDefinitions(resource);
 
         BeanDefinition dummy1 = registry.getBeanDefinition("dummy1");
         assertNotNull(dummy1);

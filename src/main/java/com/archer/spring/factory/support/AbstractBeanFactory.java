@@ -145,7 +145,7 @@ public abstract class AbstractBeanFactory implements ConfigurableBeanFactory {
     /// MARK - ConfigurableBeanFactory
 
     @Override
-    public void registerCustomEditor(Class requiredType, Class<? extends PropertyEditor> propertyEditorClass) {
+    public void registerCustomEditor(Class<?> requiredType, Class<? extends PropertyEditor> propertyEditorClass) {
         PropertyEditor propertyEditor = ClassUtils.instantiateClass(propertyEditorClass);
         customEditors.put(requiredType, propertyEditor);
     }
@@ -197,6 +197,20 @@ public abstract class AbstractBeanFactory implements ConfigurableBeanFactory {
      * 是否包含beanName对应的BeanDefinition
      */
     public abstract boolean containsBeanDefinition(String beanName);
+
+
+    /// MARK - Public
+
+    public String[] getSingletonNames(Class<?> type) {
+        Set<String> matches = new HashSet<>();
+        for (String name : singletonMap.keySet()) {
+            Object sharedObj = singletonMap.get(name);
+            if (type == null || type.isAssignableFrom(sharedObj.getClass())) {
+                matches.add(name);
+            }
+        }
+        return matches.toArray(new String[0]);
+    }
 
     /// MARK - Internal
 

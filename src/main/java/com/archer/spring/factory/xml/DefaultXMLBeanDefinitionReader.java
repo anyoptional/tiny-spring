@@ -72,7 +72,7 @@ public class DefaultXMLBeanDefinitionReader implements XMLBeanDefinitionReader {
     /// MARK - XMLBeanDefinitionReader
 
     @Override
-    public void loadBeanDefinition(Resource resource) {
+    public void loadBeanDefinitions(Resource resource) {
         Objects.requireNonNull(resource, "Resource不能为空，需要提供一个xml配置文件");
         InputStream is = null;
         try {

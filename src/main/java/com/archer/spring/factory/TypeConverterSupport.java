@@ -9,6 +9,7 @@ package com.archer.spring.factory;
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
 
+import java.beans.PropertyDescriptor;
 import java.util.Objects;
 
 /**
@@ -32,9 +33,12 @@ public abstract class TypeConverterSupport extends PropertyEditorRegistrySupport
     }
 
     @Override
-    @Nullable
-    public <T> T convertIfNecessary(Object value, Class<T> requiredType) throws BeansException {
-        return typeConverterDelegate.convertIfNecessary(value, requiredType);
+    public Object convertIfNecessary(Object value, Class<?> requiredType) throws BeansException {
+        return typeConverterDelegate.convertIfNecessary(null, value, requiredType);
     }
 
+    @Override
+    public Object convertIfNecessary(Object value, PropertyDescriptor descriptor) throws BeansException {
+        return typeConverterDelegate.convertIfNecessary(value, descriptor);
+    }
 }

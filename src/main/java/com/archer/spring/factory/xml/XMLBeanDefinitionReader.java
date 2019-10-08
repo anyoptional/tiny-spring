@@ -22,6 +22,6 @@ public interface XMLBeanDefinitionReader {
      * 加载bean的定义信息。
      * @param resource 代表一个xml配置文件
      */
-    void loadBeanDefinition(@NotNull Resource resource);
+    void loadBeanDefinitions(@NotNull Resource resource);
 
 }

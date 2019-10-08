@@ -33,6 +33,9 @@ public class ConstructorArgumentValues {
      * 解析出了一个带位置的<constructor-arg>标签
      */
     public void addIndexedArgumentValue(int index, Object value) {
+        if (index < 0) {
+            throw new IllegalArgumentException("下标从0开始");
+        }
         this.indexedArgumentValues.put(index, new ValueHolder(value));
     }
 
@@ -40,6 +43,9 @@ public class ConstructorArgumentValues {
      * 解析出了一个带位置和参数类型的<constructor-arg>标签
      */
     public void addIndexedArgumentValue(int index, Object value, String type) {
+        if (index < 0) {
+            throw new IllegalArgumentException("下标从0开始");
+        }
         this.indexedArgumentValues.put(index, new ValueHolder(value, type));
     }
 
@@ -47,7 +53,7 @@ public class ConstructorArgumentValues {
      * 获取指定位置的参数值，如果参数值没有指定类型信息，那么requiredType会被忽略，
      * 否则比对requiredType和ValueHolder.type是否相同。
      */
-    public ValueHolder getIndexedArgumentValue(int index, Class requiredType) {
+    public ValueHolder getIndexedArgumentValue(int index, Class<?> requiredType) {
         ValueHolder valueHolder = this.indexedArgumentValues.get(index);
         if (valueHolder != null) {
             if (valueHolder.getType() == null || requiredType.getName().equals(valueHolder.getType())) {
@@ -74,7 +80,7 @@ public class ConstructorArgumentValues {
     /**
      * 返回匹配指定类型的参数值。
      */
-    public ValueHolder getGenericArgumentValue(Class requiredType) {
+    public ValueHolder getGenericArgumentValue(Class<?> requiredType) {
         // 遍历genericArgumentValues列表
         for (Iterator it = this.genericArgumentValues.iterator(); it.hasNext();) {
             ValueHolder valueHolder = (ValueHolder) it.next();
@@ -101,7 +107,7 @@ public class ConstructorArgumentValues {
      * 现根据index和requiredType在map中查找，如果没有则根据requiredType
      * 在list中查找。
      */
-    public ValueHolder getArgumentValue(int index, Class requiredType) {
+    public ValueHolder getArgumentValue(int index, Class<?> requiredType) {
         ValueHolder valueHolder = getIndexedArgumentValue(index, requiredType);
         if (valueHolder == null) {
             valueHolder = getGenericArgumentValue(requiredType);

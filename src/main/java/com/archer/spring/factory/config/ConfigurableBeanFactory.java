@@ -34,7 +34,7 @@ public interface ConfigurableBeanFactory extends BeanFactory {
     /**
      * 向BeanFactory注册一个PropertyEditor，此PropertyEditor解析的目标类型是requiredType。
      */
-    void registerCustomEditor(Class requiredType, Class<? extends PropertyEditor> propertyEditorClass);
+    void registerCustomEditor(Class<?> requiredType, Class<? extends PropertyEditor> propertyEditorClass);
 
     /**
      * 添加一个bean的后置处理器
