@@ -16,4 +16,4 @@
 &emsp;&emsp;代码管理上采取着和Spring几乎相同的包管理模式，若是再去翻看Spring源码多少会轻车熟路一点。<br/>
 
 #### 系列文章
-[一步一步教你实现spring-beans (一)](https://www.jianshu.com/p/d8c261b5cb6d)
+[手把手教你实现spring-beans (一)](https://juejin.im/post/5d9d3f52f265da5ba0777d45)
