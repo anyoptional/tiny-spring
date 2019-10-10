@@ -175,6 +175,7 @@ public abstract class AbstractBeanFactory implements ConfigurableBeanFactory {
             for (String key : keySet) {
                 destroySingleton(key, singletonMap.get(key));
             }
+            singletonMap.clear();
         }
     }
 
