@@ -16,7 +16,7 @@ import com.archer.spring.io.ResourceLoader;
 public interface ApplicationContext extends ResourceLoader, ListableBeanFactory, ApplicationEventPublisher {
 
     /**
-     * 返回ApplicationContext包装的AutowireCapableBeanFactory，一般在框架内部使用。
+     * 返回ApplicationContext内部组合的AutowireCapableBeanFactory，一般在框架内部使用。
      */
     AutowireCapableBeanFactory getAutowireCapableBeanFactory() throws IllegalStateException;
 

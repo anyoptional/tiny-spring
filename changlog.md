@@ -15,3 +15,6 @@
 
 ##### sixth-stage
 完善了类型转换，实现了基本的BeanFactory。
+
+#### seventh-stage
+定义了ApplicationContext和ApplicationEvent的基本框架。

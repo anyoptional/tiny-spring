@@ -10,11 +10,11 @@ import com.archer.spring.context.ApplicationContext;
 import com.archer.spring.context.ApplicationEvent;
 
 /**
- * ApplicationContext停止事件。
+ * ApplicationContext初始化或刷新事件。
  */
-public class ContextStoppedEvent extends ApplicationEvent {
+public class ContextRefreshedEvent extends ApplicationEvent {
 
-    public ContextStoppedEvent(ApplicationContext context) {
+    public ContextRefreshedEvent(ApplicationContext context) {
         super(context);
     }
 }
