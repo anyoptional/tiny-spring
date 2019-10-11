@@ -176,11 +176,23 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                 resolvedValues.addGenericArgumentValue(resolvedValue, valueHolder.getType());
             }
         }
+
+        // 获取bean class的所有构造器
         Constructor<?>[] constructors = mbd.getBeanClass().getConstructors();
+        // 按参数个数从多到少排序，方便后续做选择
+        Arrays.sort(constructors, (c1,c2) -> {
+            int c1Len = c1.getParameterCount();
+            int c2Len = c2.getParameterCount();
+            return c2Len - c1Len;
+        });
+
         BeanWrapper beanWrapper = new BeanWrapper();
         registerPropertyEditors(beanWrapper);
         Constructor<?> selectedCtor = null;
         Object[] selectedArgs = null;
+
+        // 类型的匹配程度
+        int minTypeDiffWeight = Integer.MAX_VALUE;
         // 遍历构造函数，查找第一个匹配的
         for (int i = 0; i < constructors.length; i++) {
             try {
@@ -205,8 +217,13 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                         args[j] = matchingBeans.values().iterator().next();
                     }
                 }
-                selectedArgs = args;
-                selectedCtor = constructor;
+                int typeDiffWeight = getTypeDifferenceWeight(argTypes, args);
+                // 可能有多个匹配结果，删选出最精确的那一个
+                if (typeDiffWeight < minTypeDiffWeight) {
+                    selectedCtor = constructor;
+                    selectedArgs = args;
+                    minTypeDiffWeight = typeDiffWeight;
+                }
             } catch (BeansException ex) {
                 // 没有合适的
                 if (i == constructors.length - 1 && selectedCtor == null) {
@@ -221,6 +238,31 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         // 根据推断的构造器和参数初始化新的对象
         beanWrapper.setWrappedInstance(ClassUtils.instantiateClass(selectedCtor, selectedArgs));
         return beanWrapper;
+    }
+
+    /**
+     * 用来确定arg和对应argType的远近关系，从来确定匹配结果。
+     */
+    private int getTypeDifferenceWeight(Class<?>[] argTypes, Object[] args) {
+        int result = 0;
+        for (int i = 0; i < argTypes.length; i++) {
+            if (!ClassUtils.isAssignableValue(argTypes[i], args[i])) {
+                return Integer.MAX_VALUE;
+            }
+            if (args[i] != null) {
+                Class<?> superClass = args[i].getClass().getSuperclass();
+                while (superClass != null) {
+                    if (argTypes[i].isAssignableFrom(superClass)) {
+                        result++;
+                        superClass = superClass.getSuperclass();
+                    }
+                    else {
+                        superClass = null;
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     /**

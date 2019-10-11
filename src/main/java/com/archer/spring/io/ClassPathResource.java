@@ -6,7 +6,6 @@
 
 package com.archer.spring.io;
 
-import com.archer.spring.factory.PropertyValue;
 import com.archer.spring.utils.ResourcesUtils;
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
