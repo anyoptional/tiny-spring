@@ -15,5 +15,6 @@ public interface ApplicationEventPublisher {
     /**
      * 派发一个ApplicationEvent，并通知所有已注册的ApplicationListener。
      */
-    void pushlishEvent(ApplicationEvent event);
+    void publishEvent(ApplicationEvent event);
+
 }

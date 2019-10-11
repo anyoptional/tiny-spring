@@ -32,19 +32,9 @@ public interface ConfigurableApplicationContext extends LifeCycle, ApplicationCo
     void refresh() throws BeansException, IllegalStateException;
 
     /**
-     * 向JVM运行时系统注册一个shutdown hook用来在JVM关闭时关闭当前ApplicationContext。
-     */
-    void registerShutdownHook();
-
-    /**
      * 关闭当前ApplicationContext。
      */
     void close();
-
-    /**
-     * 当前ApplicationContext是否已被刷新且没有被关闭。
-     */
-    boolean isActive();
 
     /**
      * 返回当前ApplicationContext内部组合的BeanFactory。
