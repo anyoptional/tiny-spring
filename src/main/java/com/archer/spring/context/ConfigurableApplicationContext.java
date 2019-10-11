@@ -14,7 +14,7 @@ import com.archer.spring.factory.config.ConfigurableListableBeanFactory;
  * 类似于BeanFactory设计，ApplicationContext也只是一个功能最小的接口，
  * ConfigurableApplicationContext在此基础之上扩充了它的功能。
  */
-public interface ConfigurableApplicationContext extends LifeCycle, ApplicationContext {
+public interface ConfigurableApplicationContext extends ApplicationContext {
 
     /**
      * 添加一个BeanFactory后置处理器。

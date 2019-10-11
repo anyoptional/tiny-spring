@@ -28,7 +28,7 @@ public class AbstractApplicationContext extends DefaultResourceLoader implements
     private String displayName = Objects.toString(this);
 
 
-    /// MARK - LifeCycle
+    /// MARK - ConfigurableApplicationContext
 
     @Override
     public void addBeanFactoryPostProcessor(BeanFactoryPostProcessor beanFactoryPostProcessor) {
@@ -53,23 +53,6 @@ public class AbstractApplicationContext extends DefaultResourceLoader implements
     @Override
     public ConfigurableListableBeanFactory getBeanFactory() throws IllegalStateException {
         return null;
-    }
-
-    /// MARK - LifeCycle
-
-    @Override
-    public void start() {
-
-    }
-
-    @Override
-    public void stop() {
-
-    }
-
-    @Override
-    public boolean isRunning() {
-        return false;
     }
 
     /// MARK - ApplicationContext
