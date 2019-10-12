@@ -11,4 +11,32 @@
 
     <bean id="application-listener" class="com.archer.spring.context.processor.ApplicationListenerImpl"/>
 
+    <!-- CustomEditorConfigurer example -->
+
+    <bean id="date-holder" class="com.archer.spring.context.processor.DateHolder">
+        <property name="date">
+            <value>2019-10-12</value>
+        </property>
+    </bean>
+
+    <bean id="date-property-editor" class="com.archer.spring.context.processor.DatePropertyEditor">
+        <property name="datePattern">
+            <value>yyyy-MM-dd</value>
+        </property>
+    </bean>
+
+    <bean id="date-property-editor-registrar" class="com.archer.spring.context.processor.DatePropertyEditorRegistrar">
+        <property name="propertyEditor">
+            <ref bean="date-property-editor"/>
+        </property>
+    </bean>
+
+    <bean id="custom-property-editor-configurer" class="com.archer.spring.factory.config.CustomEditorConfigurer">
+        <property name="propertyEditorRegistrars">
+            <list>
+                <ref bean="date-property-editor-registrar"/>
+            </list>
+        </property>
+    </bean>
+
 </beans>

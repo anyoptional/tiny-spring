@@ -7,6 +7,7 @@
 package com.archer.spring.factory.support;
 
 import com.archer.spring.factory.BeansException;
+import com.archer.spring.factory.PropertyEditorRegistrar;
 import com.archer.spring.factory.config.ConfigurableBeanFactory;
 import com.archer.spring.factory.FactoryBean;
 import com.archer.spring.factory.config.BeanDefinition;
@@ -36,6 +37,9 @@ public abstract class AbstractBeanFactory implements ConfigurableBeanFactory {
     // 保存所有的bean后置处理器
     private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
 
+    // 保存所有的PropertyEditorRegistrar
+    private final Set<PropertyEditorRegistrar> propertyEditorRegistrars = new HashSet<>();
+
     /// MARK - Getters & Setters
 
     public Map<Class<?>, PropertyEditor> getCustomEditors() {
@@ -44,6 +48,10 @@ public abstract class AbstractBeanFactory implements ConfigurableBeanFactory {
 
     public List<BeanPostProcessor> getBeanPostProcessors() {
         return Collections.unmodifiableList(beanPostProcessors);
+    }
+
+    public Set<PropertyEditorRegistrar> getPropertyEditorRegistrars() {
+        return propertyEditorRegistrars;
     }
 
     /// MARK - Initializers
@@ -143,6 +151,11 @@ public abstract class AbstractBeanFactory implements ConfigurableBeanFactory {
     }
 
     /// MARK - ConfigurableBeanFactory
+
+    @Override
+    public void addPropertyEditorRegistrar(PropertyEditorRegistrar registrar) {
+        propertyEditorRegistrars.add(registrar);
+    }
 
     @Override
     public void registerCustomEditor(Class<?> requiredType, Class<? extends PropertyEditor> propertyEditorClass) {

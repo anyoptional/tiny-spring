@@ -358,6 +358,11 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
      * 将BeanFactory持有的PropertyEditor同步到BeanWrapper
      */
     private void registerPropertyEditors(BeanWrapper wrapper) {
+        // 1. 注册PropertyEditorRegistrar中的
+        for (PropertyEditorRegistrar registrar : getPropertyEditorRegistrars()) {
+            registrar.registerCustomEditors(wrapper);
+        }
+        // 2. 同步BeanFactory持有的
         Map<Class<?>, PropertyEditor> customEditors = getCustomEditors();
         Set<Class<?>> keys = customEditors.keySet();
         for (Class<?> type : keys) {

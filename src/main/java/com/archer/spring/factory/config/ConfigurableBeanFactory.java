@@ -14,6 +14,7 @@ package com.archer.spring.factory.config;
 
 import com.archer.spring.factory.BeanFactory;
 import com.archer.spring.factory.BeansException;
+import com.archer.spring.factory.PropertyEditorRegistrar;
 
 import java.beans.PropertyEditor;
 
@@ -40,6 +41,11 @@ public interface ConfigurableBeanFactory extends BeanFactory {
      * 添加一个bean的后置处理器
      */
     void addBeanPostProcessor(BeanPostProcessor beanPostProcessor);
+
+    /**
+     * 添加一个PropertyEditor注册器。
+     */
+    void addPropertyEditorRegistrar(PropertyEditorRegistrar registrar);
 
     /**
      * 通过给定的bean名称返回对应的Bean定义信息，然后通过BeanDefinition就可以访问属性和构造
