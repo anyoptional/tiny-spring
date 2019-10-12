@@ -25,8 +25,8 @@ public interface XMLBeanDefinitionParser {
      * @param classLoader 加载<bean>标签对应JavaBean的类加载器
      * @param registry 用来注册BeanDefinition的注册器
      */
-    void registerBeanDefinitions(@NotNull Document document,
-                                 @NotNull ClassLoader classLoader,
-                                 @NotNull BeanDefinitionRegistry registry);
+    int registerBeanDefinitions(@NotNull Document document,
+                                @NotNull ClassLoader classLoader,
+                                @NotNull BeanDefinitionRegistry registry);
 
 }

@@ -50,11 +50,13 @@ public abstract class AbstractXMLApplicationContext extends AbstractRefreshableA
     }
 
     private void loadBeanDefinitions(XMLBeanDefinitionReader reader) {
+        int numberOfBeanDefinitions = 0;
         Resource[] resources = getConfigResources();
         if (resources != null && resources.length > 0) {
             for (Resource resource : resources) {
-                reader.loadBeanDefinitions(resource);
+                 numberOfBeanDefinitions += reader.loadBeanDefinitions(resource);
             }
         }
+        System.out.println("一共找到" + numberOfBeanDefinitions + "个<bean>标签");
     }
 }

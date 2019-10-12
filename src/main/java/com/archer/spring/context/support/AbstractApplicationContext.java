@@ -37,7 +37,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
     private long startupDate;
 
     // ApplicationEvent多播器
-    private final ApplicationEventMulticaster eventMulticaster = new DefaultApplicationEventMulticaster();
+    private ApplicationEventMulticaster eventMulticaster;
+
+    // 手动注册的ApplicationListener
+    private Set<ApplicationListener> manuallyRegisteredListeners = new LinkedHashSet<>();
 
     /// MARK - Initializers
 
@@ -56,6 +59,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
 
     @Override
     public void addApplicationListener(ApplicationListener listener) {
+        manuallyRegisteredListeners.add(listener);
         eventMulticaster.addApplicationListener(listener);
     }
 
@@ -74,6 +78,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
             invokeBeanFactoryPostProcessors(beanFactory);
             // 注册所有BeanPostProcessor
             registerBeanPostProcessors(beanFactory);
+            // 初始化事件多播器
+            initApplicationEventMulticaster();
             // 准备完成，正在刷新
             onRefresh();
             // 注册所有ApplicationListener
@@ -96,7 +102,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
         // 销毁所有缓存的singleton bean
         getBeanFactory().destroySingletons();
         // 发出ContextClosedEvent
-        eventMulticaster.multicastEvent(new ContextClosedEvent(this));
+        publishEvent(new ContextClosedEvent(this));
     }
 
     @Override
@@ -219,7 +225,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
      * 实例化所有定义的BeanPostProcessor，并为它们进行注册。
      */
     protected void registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        // 找到所有定义的BeanPostProcessor
+        // ApplicationContext表面上只是一个ListableBeanFactory,
+        // 并不具备ConfigurableBeanFactory.addBeanPostProcessor(...)的能力。
+        // 对ApplicationContext来说，配置文件中配置的BeanPostProcessor就是所有的了
         String[] beanNames = beanFactory.getBeanDefinitionNames(BeanPostProcessor.class);
         if (beanNames.length > 0) {
             for (String beanName : beanNames) {
@@ -239,15 +247,26 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
     protected void onRefresh() { }
 
     /**
+     * 初始化多播器。
+     */
+    protected void initApplicationEventMulticaster() {
+        if (eventMulticaster != null) {
+            eventMulticaster.removeAllListeners();
+        }
+        eventMulticaster = new DefaultApplicationEventMulticaster();
+    }
+
+    /**
      * 注册所有已定义的ApplicationListener
      */
     protected void registerApplicationListeners() {
-        // 获取所有定义好的ApplicationListener
+        // 1. 重新注册所有手动注册上去的ApplicationListener
+        manuallyRegisteredListeners.forEach(eventMulticaster::addApplicationListener);
+        // 2. 注册配置文件中定义的ApplicationListener
         Collection<Object> listeners = getBeansOfType(ApplicationListener.class,
                 true, false).values();
-        // 逐个添加ApplicationEventMulticaster
         for (Object listener : listeners) {
-            addApplicationListener((ApplicationListener) listener);
+            eventMulticaster.addApplicationListener((ApplicationListener) listener);
         }
     }
 

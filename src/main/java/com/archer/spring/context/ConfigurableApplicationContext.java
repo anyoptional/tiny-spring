@@ -37,7 +37,7 @@ public interface ConfigurableApplicationContext extends ApplicationContext {
     void close();
 
     /**
-     * 返回当前ApplicationContext内部组合的BeanFactory。
+     * 返回当前ApplicationContext内部组合的BeanFactory，一般在框架内部使用。
      */
     ConfigurableListableBeanFactory getBeanFactory() throws IllegalStateException;
 

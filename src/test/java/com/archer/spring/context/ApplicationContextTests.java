@@ -17,10 +17,22 @@ public class ApplicationContextTests {
     @Test
     public void testApplicationContext() {
 
-        ApplicationContext context = new ClassPathXMLApplicationContext("classpath:config.xml");
+        ApplicationContext context = new ClassPathXMLApplicationContext("classpath:config.xml", "autowire.xml");
         Capital capital = context.getBean("capital", Capital.class);
         assertNotNull(capital);
         System.out.println(capital);
 
     }
+
+    @Test
+    public void testBeanFactoryPostProcessor() {
+        new ClassPathXMLApplicationContext("context.xml");
+    }
+
+    @Test
+    public void testApplicationListener() {
+        ConfigurableApplicationContext context = new ClassPathXMLApplicationContext("context.xml");
+        context.close();
+    }
+
 }

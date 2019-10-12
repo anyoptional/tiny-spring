@@ -55,7 +55,7 @@ public class DefaultXMLBeanDefinitionParser implements XMLBeanDefinitionParser {
     /// MARK - XMLBeanDefinitionParser
 
     @Override
-    public void registerBeanDefinitions(Document document, ClassLoader classLoader, BeanDefinitionRegistry registry) {
+    public int registerBeanDefinitions(Document document, ClassLoader classLoader, BeanDefinitionRegistry registry) {
         // 获取顶层元素(也就是<beans>标签)
         Element root = document.getDocumentElement();
         // 获取<beans>下的子标签列表
@@ -74,7 +74,7 @@ public class DefaultXMLBeanDefinitionParser implements XMLBeanDefinitionParser {
                 loadBeanDefinition((Element) node, classLoader, registry);
             }
         }
-        System.out.println("一共找到" + numberOfBeans + "个<bean>标签");
+        return numberOfBeans;
     }
 
     /**

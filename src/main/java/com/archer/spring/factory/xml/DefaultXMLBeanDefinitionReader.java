@@ -72,7 +72,7 @@ public class DefaultXMLBeanDefinitionReader implements XMLBeanDefinitionReader {
     /// MARK - XMLBeanDefinitionReader
 
     @Override
-    public void loadBeanDefinitions(Resource resource) {
+    public int loadBeanDefinitions(Resource resource) {
         Objects.requireNonNull(resource, "Resource不能为空，需要提供一个xml配置文件");
         InputStream is = null;
         try {
@@ -82,7 +82,7 @@ public class DefaultXMLBeanDefinitionReader implements XMLBeanDefinitionReader {
             is = resource.getInputStream();
             Document doc = docBuilder.parse(is);
             // 代理给具体的解析策略去执行
-            beanDefinitionParser.registerBeanDefinitions(doc, beanClassLoader, beanDefinitionRegistry);
+            return beanDefinitionParser.registerBeanDefinitions(doc, beanClassLoader, beanDefinitionRegistry);
         } catch (Exception ex) {
             throw new BeansException("解析位于[" + resource + "]处的xml文件出错，xml文件格式不正确什么的", ex);
         } finally {

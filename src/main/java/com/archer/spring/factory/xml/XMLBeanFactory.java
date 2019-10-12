@@ -24,7 +24,8 @@ public class XMLBeanFactory extends DefaultListableBeanFactory {
     /// MARK - Initializers
 
     public XMLBeanFactory(Resource resource) throws BeansException {
-        this.reader.loadBeanDefinitions(resource);
+        int numberOfBeanDefinitions = this.reader.loadBeanDefinitions(resource);
+        System.out.println("一共找到" + numberOfBeanDefinitions + "个<bean>标签");
     }
 
 }

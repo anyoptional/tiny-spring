@@ -39,7 +39,9 @@ public class ClassPathXMLApplicationContext extends AbstractXMLApplicationContex
     private String[] getResolvedConfigLocations(String... configLocations) {
         List<String> resolvedLocations = new ArrayList<>();
         for (String location : configLocations) {
-            if (!location.startsWith(Resource.CLASSPATH_URL_PREFIX)) {
+            if (location.startsWith(Resource.CLASSPATH_URL_PREFIX)) {
+                resolvedLocations.add(location);
+            } else {
                 resolvedLocations.add(Resource.CLASSPATH_URL_PREFIX + location);
             }
         }
