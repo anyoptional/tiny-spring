@@ -18,3 +18,6 @@
 
 #### seventh-stage
 定义了ApplicationContext和ApplicationEvent的基本框架。
+
+#### eighth-stage
+实现ApplicationContext。
